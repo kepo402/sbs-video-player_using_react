@@ -17,13 +17,13 @@ function App() {
       {isInVR ? (
         <VRPlayer videoSource={sbsVideoSource} onExitVR={toggleVRMode} />
       ) : (
-        <VideoPlayer onEnterVR={toggleVRMode} />
+        <VideoPlayer sbsVideoSource={sbsVideoSource} onEnterVR={toggleVRMode} />
       )}
     </div>
   );
 }
 
-export default App; 
+export default App;
 
 
 
