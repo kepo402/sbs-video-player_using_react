@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import VideoPlayer from './VideoPlayer';
 import VRPlayer from './VRPlayer';
@@ -10,10 +9,13 @@ function App() {
     setIsInVR(!isInVR);
   };
 
+  // Example SBS video URL for testing
+  const sbsVideoSource = "https://www.images.depthify.ai/dirtbike_sbs.mp4";
+
   return (
     <div className="App">
       {isInVR ? (
-        <VRPlayer onExitVR={toggleVRMode} />
+        <VRPlayer videoSource={sbsVideoSource} onExitVR={toggleVRMode} />
       ) : (
         <VideoPlayer onEnterVR={toggleVRMode} />
       )}
@@ -21,4 +23,7 @@ function App() {
   );
 }
 
-export default App;
+export default App; 
+
+
+
