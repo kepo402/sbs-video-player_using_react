@@ -44,4 +44,3 @@ const VRPlayer = ({ videoSource, onExitVR }) => {
 };
 
 export default VRPlayer;
-
