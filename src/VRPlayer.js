@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { XR } from '@react-three/xr'; // Import XR component
-import * as THREE from 'three'; // Import THREE
+import { XR } from '@react-three/xr';
+import * as THREE from 'three';
 
 const VRPlayer = ({ videoSource, onExitVR }) => {
   const videoRef = useRef();
@@ -11,11 +11,15 @@ const VRPlayer = ({ videoSource, onExitVR }) => {
     const videoElement = videoRef.current;
 
     if (videoElement) {
-      videoElement.crossOrigin = 'anonymous'; // Allow cross-origin requests if necessary
+      videoElement.crossOrigin = 'anonymous';
       videoElement.src = videoSource;
       videoElement.load();
 
       const texture = new THREE.VideoTexture(videoElement);
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.format = THREE.RGBFormat;
+
       setTexture(texture);
     }
   }, [videoSource]);
@@ -24,7 +28,7 @@ const VRPlayer = ({ videoSource, onExitVR }) => {
     <>
       <Canvas
         gl={{ alpha: false }}
-        camera={{ position: [0, 0, 0], fov: 75 }}
+        camera={{ position: [0, 0, 5], fov: 75 }}
         onCreated={({ gl }) => {
           gl.xr.enabled = true;
         }}
