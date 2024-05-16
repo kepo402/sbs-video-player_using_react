@@ -5,7 +5,8 @@ import * as THREE from 'three';
 
 const VRPlayer = ({ videoSource, onExitVR }) => {
   const videoRef = useRef();
-  const [texture, setTexture] = useState(null);
+  const [textureLeft, setTextureLeft] = useState(null);
+  const [textureRight, setTextureRight] = useState(null);
 
   useEffect(() => {
     const videoElement = videoRef.current;
@@ -15,12 +16,26 @@ const VRPlayer = ({ videoSource, onExitVR }) => {
       videoElement.src = videoSource;
       videoElement.load();
 
-      const texture = new THREE.VideoTexture(videoElement);
-      texture.minFilter = THREE.LinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      texture.format = THREE.RGBFormat;
+      console.log('Video element:', videoElement);
 
-      setTexture(texture);
+      videoElement.addEventListener('loadedmetadata', () => {
+        console.log('Video metadata loaded:', videoElement.duration);
+      });
+
+      const textureLeft = new THREE.VideoTexture(videoElement);
+      const textureRight = new THREE.VideoTexture(videoElement);
+
+      console.log('Texture left:', textureLeft);
+      console.log('Texture right:', textureRight);
+
+      // Set offsets to display left and right eye parts of the video
+      textureLeft.offset.set(0, 0);
+      textureLeft.repeat.set(0.5, 1);
+      textureRight.offset.set(0.5, 0);
+      textureRight.repeat.set(0.5, 1);
+
+      setTextureLeft(textureLeft);
+      setTextureRight(textureRight);
     }
   }, [videoSource]);
 
@@ -28,17 +43,24 @@ const VRPlayer = ({ videoSource, onExitVR }) => {
     <>
       <Canvas
         gl={{ alpha: false }}
-        camera={{ position: [0, 0, 5], fov: 75 }}
+        camera={{ position: [0, 0, 0], fov: 75 }}
         onCreated={({ gl }) => {
           gl.xr.enabled = true;
         }}
       >
+        <color attach="background" args={['#000']} />
         <ambientLight />
-        {texture && (
-          <mesh>
-            <planeGeometry args={[16, 9]} />
-            <meshBasicMaterial side={THREE.DoubleSide} map={texture} />
-          </mesh>
+        {textureLeft && textureRight && (
+          <>
+            <mesh position={[-4, 0, 0]}>
+              <planeGeometry args={[8, 9]} />
+              <meshBasicMaterial side={THREE.DoubleSide} map={textureLeft} />
+            </mesh>
+            <mesh position={[4, 0, 0]} rotation={[0, Math.PI, 0]}>
+              <planeGeometry args={[8, 9]} />
+              <meshBasicMaterial side={THREE.DoubleSide} map={textureRight} />
+            </mesh>
+          </>
         )}
         <XR />
       </Canvas>
@@ -48,3 +70,6 @@ const VRPlayer = ({ videoSource, onExitVR }) => {
 };
 
 export default VRPlayer;
+
+
+
